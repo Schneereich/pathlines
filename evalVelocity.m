@@ -13,22 +13,22 @@ downIdx = floor(yk/dy)+1;
 upIdx = ceil(yk/dy)+1;
 
 % Fallunterscheidung
-if leftIdx < 1 || rightIdx > m || downIdx < 1 || upIdx > n
+if leftIdx < 1 || rightIdx > m || downIdx < 1 || upIdx > n %auﬂerhalb des Gitters
     warning("Out of boundaries.");
     uk = NAN;
     vk = NAN;
     return
 end
 
-if any(isnan([U(leftIdx,downIdx),U(leftIdx,upIdx),U(rightIdx,downIdx),U(rightIdx,upIdx)]))
+if any(isnan([U(leftIdx,downIdx),U(leftIdx,upIdx),U(rightIdx,downIdx),U(rightIdx,upIdx)])) %im Loch
     warning("Velocity is infinity.");
     uk = inf;
     vk = inf;
     return
 end
     
-alpha = (xk-leftIdx)/dx;
-beta = (yk-downIdx)/dy;
+alpha = (xk-X(1,leftIdx))/dx;
+beta = (yk-Y(downIdx,1))/dy;
 
 
 %% interpolation
