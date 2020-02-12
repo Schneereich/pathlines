@@ -32,7 +32,7 @@ t = linspace(min(coordinates(:,2)),max(coordinates(:,2)),160);
 [x,y] = meshgrid(s,t);
 
 %*** start with 1 or 100
-first = 100; % = 1 start time step
+first = 100;
 last =  N-1; 
 %*** iniate the first solution  
 u = U{first};
@@ -47,7 +47,10 @@ for k = first:last
   uy = reshape(u(elements3,2),[],3);
   uv2 = tri2monic(coordinates,elements3,{ux,uy},x,y);
   for j=1:length(x0)
-    [vx,vy] = pathline(uv1{1},uv1{2},uv2{1},uv2{2},s,t,x0(j),y0(j),T/(N-1),100);
+    % available methods: euler, bettereuler, eulerheun, cranknicolson,
+    % rungekutta4newton, rungekutta4classic
+    method = 'euler';
+    [vx,vy] = pathline(uv1{1},uv1{2},uv2{1},uv2{2},s,t,x0(j),y0(j),T/(N-1),100, method);
     x0(j) = vx(end);
     y0(j) = vy(end);
     plot(vx,vy,'k.')
