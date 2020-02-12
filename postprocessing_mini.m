@@ -32,7 +32,7 @@ t = linspace(min(coordinates(:,2)),max(coordinates(:,2)),160);
 [x,y] = meshgrid(s,t);
 
 %*** start with 1 or 100
-first = 100;
+first = 100; % = 1 start time step
 last =  N-1; 
 %*** iniate the first solution  
 u = U{first};

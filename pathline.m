@@ -5,7 +5,15 @@ function [x1,y1] = pathline(u1,v1,u2,v2,x,y,x0,y0,T,N)
   x1 = zeros(N,1); y1 = zeros(N,1);
   x1(1) = xmx0; y1(1) = ymy0;
   for k = 1 : N-1
-     ...
+    [up, vp] = getValueMonic(u1,v1,dx,dy,sx,sy,xmx0,ymy0);
+    [un, vn] = getValueMonic(u2,v2,dx,dy,sx,sy,xmx0,ymy0);
+    
+    % TODO: Interpolation
+    uk = ...%((N-k)*up + k*un);
+    vk = ...%((N-k)*vp + k*vn);
+    
+    x1(k+1) = x(k) + dt * uk;
+    y1(k+1) = y(k) + dt * vk;
   end
   x1 = x1 + x(1);
   y1 = y1 + y(1);
