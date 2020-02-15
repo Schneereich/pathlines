@@ -6,7 +6,7 @@ x1 = zeros(N,1); y1 = zeros(N,1);
 x1(1) = xmx0; y1(1) = ymy0;
 switch method
     % Explizites Eulerverfahren
-    case 'euler'
+    case 'explicitEuler'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
             V = v1 + (k-1)/(N-1)*(v2-v1);
@@ -15,8 +15,32 @@ switch method
             y1(k+1) = y1(k) + dt*v;
         end
         
+    % Implizites Eulerverfahren    
+    case 'implicitEuler'
+        for k = 1 : N-1
+            maxIt = 10; tol = 1e-13;
+            U = u1 + (k-1)/(N-1)*(u2-u1);
+            V = v1 + (k-1)/(N-1)*(v2-v1);
+            [u,v] = getValueMonic(U,V,dx,dy,sx,sy,x1(k),y1(k));
+            xj = x1(k)+dt*u;
+            yj = y1(k)+dt*v;
+            U = u1 + k/(N-1)*(u2-u1);
+            V = v1 + k/(N-1)*(v2-v1);
+            for l = 1:maxIt
+                [u,v] = getValueMonic(U,V,dx,dy,sx,sy,xj,yj);
+                xk = x1(k) + dt*u;
+                yk = y1(k) + dt*v;
+                if norm([xk yk]-[xj yk]) < tol
+                    break
+                end
+                xj = xk; yj = yk;
+            end
+            x1(k+1) = xk;
+            y1(k+1) = yk;
+        end    
+    
     % Verbessertes Eulerverfahren
-    case 'bettereuler'
+    case 'betterEuler'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
             V = v1 + (k-1)/(N-1)*(v2-v1);
@@ -31,34 +55,35 @@ switch method
         end
         
     % Euler-Heun (einfaches Praediktor-Korrektor)
-    case 'eulerheun'
+    case 'eulerHeun'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
             V = v1 + (k-1)/(N-1)*(v2-v1);
-            [uj,vj] = getValueMonic(U,V,dx,dy,sx,sy,x1(k),y1(k));
+            [uj,v] = getValueMonic(U,V,dx,dy,sx,sy,x1(k),y1(k));
             xtemp = x1(k)+dt*uj;
-            ytemp = y1(k)+dt*vj;
+            ytemp = y1(k)+dt*v;
             U = u1 + k/(N-1)*(u2-u1);
             V = v1 + k/(N-1)*(v2-v1);
             [uk,vk] = getValueMonic(U,V,dx,dy,sx,sy,xtemp,ytemp);
             x1(k+1) = x1(k) + dt/2*(uj+uk);
-            y1(k+1) = y1(k) + dt/2*(vj+vk);
+            y1(k+1) = y1(k) + dt/2*(v+vk);
         end
+        
     % Crank-Nicolson (mehrfaches Praediktor-Korrektor)
-    case 'cranknicolson'
+    case 'crankNicolson'
         for k = 1 : N-1
             maxIt = 10; tol = 1e-13;
             U = u1 + (k-1)/(N-1)*(u2-u1);
             V = v1 + (k-1)/(N-1)*(v2-v1);
-            [uj,vj] = getValueMonic(U,V,dx,dy,sx,sy,x1(k),y1(k));
+            [uj,v] = getValueMonic(U,V,dx,dy,sx,sy,x1(k),y1(k));
             xj = x1(k)+dt*uj;
-            yj = y1(k)+dt*vj;
+            yj = y1(k)+dt*v;
             U = u1 + k/(N-1)*(u2-u1);
             V = v1 + k/(N-1)*(v2-v1);
             for l = 1:maxIt
                 [uk,vk] = getValueMonic(U,V,dx,dy,sx,sy,xj,yj);
                 xk = x1(k) + dt/2*(uj+uk);
-                yk = y1(k) + dt/2*(vj+vk);
+                yk = y1(k) + dt/2*(v+vk);
                 if norm([xk yk]-[xj yk]) < tol
                     break
                 end
@@ -68,7 +93,7 @@ switch method
             y1(k+1) = yk;
         end
     % Runge-Kutta 4. Ordnung (Newtonsche 3/8 Regel)
-    case 'rungekutta4newton'
+    case 'rungeKutta4Newton'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
             V = v1 + (k-1)/(N-1)*(v2-v1);
@@ -88,7 +113,7 @@ switch method
             y1(k+1) = y1(k) + dt/8*(k12+3*(k22+k32)+k42);
         end
     % Runge-Kutta 4. Ordnung (klassisch)
-    case 'rungekutta4classic'
+    case 'rungeKutta4Classic'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
             V = v1 + (k-1)/(N-1)*(v2-v1);
@@ -104,7 +129,7 @@ switch method
             y1(k+1) = y1(k) + dt/6*(k12+2*(k22+k32)+k42);
         end
     otherwise
-        error('Method not implemented yet');
+        error('Please choose a method.');
 end
 x1 = x1 + x(1);
 y1 = y1 + y(1);
@@ -132,4 +157,3 @@ if fac == 0 && lambda == 0
 end
 lambda = [lambda;1-lambda];
 end
-
