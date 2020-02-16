@@ -9,10 +9,11 @@ methods = ["explicitEuler","implicitEuler","betterEuler","eulerHeun", ...
 nMethods = length(methods);
 lineStyle = {'--o','-d','-.*','--s',':p','-.x','-^'};
 
-%*** solve and time pathlines for multiple substeps
-subSteps = 50:50:500; % [50, 100, 150];
+%*** solve pathlines and measure calculation time for changing substeps
+subSteps = [50, 100, 150];
 nSubSteps = length(subSteps);
 solveTimes = zeros(nSubSteps, nMethods);
+f = figure(3);
 for m = 1:nMethods
     for s = 1:nSubSteps
         solveTimes(s,m) = mean( ...
@@ -21,8 +22,8 @@ for m = 1:nMethods
                                 'N',N, ...
                                 'subSteps',subSteps(s)));
     end
-    %*** compare runtime of solvers for increasing substeps
-    figure(3)
+    %*** compare runtime of solvers
+    figure(f)
     plot(subSteps,solveTimes(:,m),lineStyle{m},'LineWidth',1)
     hold on
 end

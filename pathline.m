@@ -1,21 +1,24 @@
 function [x1,y1] = pathline(u1,v1,u2,v2,x,y,x0,y0,T,N,method)
+
 dx = x(2)-x(1); sx = length(x); xmx0 = x0-x(1);
 dy = y(2)-y(1); sy = length(y); ymy0 = y0-y(1);
 dt = T/(N-1);
 x1 = zeros(N,1); y1 = zeros(N,1);
 x1(1) = xmx0; y1(1) = ymy0;
+
 switch method
-    % Explizites Eulerverfahren
+    %*** explicit Euler method
     case 'explicitEuler'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
             V = v1 + (k-1)/(N-1)*(v2-v1);
+            %*** calculate velocity of the particle at actual position
             [u,v] = getValueMonic(U,V,dx,dy,sx,sy,x1(k),y1(k));
             x1(k+1) = x1(k) + dt*u;
             y1(k+1) = y1(k) + dt*v;
         end
         
-    % Implizites Eulerverfahren    
+    %*** implicit Euler method   
     case 'implicitEuler'
         for k = 1 : N-1
             maxIt = 10; tol = 1e-13;
@@ -33,13 +36,14 @@ switch method
                 if norm([xk yk]-[xj yk]) < tol
                     break
                 end
-                xj = xk; yj = yk;
+                xj = xk; 
+                yj = yk;
             end
             x1(k+1) = xk;
             y1(k+1) = yk;
         end    
     
-    % Verbessertes Eulerverfahren
+    %*** improved explicit Euler method
     case 'betterEuler'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
@@ -54,7 +58,7 @@ switch method
             y1(k+1) = y1(k) + dt*v;
         end
         
-    % Euler-Heun (einfaches Praediktor-Korrektor)
+    %*** Heun's method
     case 'eulerHeun'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
@@ -69,7 +73,7 @@ switch method
             y1(k+1) = y1(k) + dt/2*(v+vk);
         end
         
-    % Crank-Nicolson (mehrfaches Praediktor-Korrektor)
+    %*** Crank-Nicolson method
     case 'crankNicolson'
         for k = 1 : N-1
             maxIt = 10; tol = 1e-13;
@@ -92,7 +96,8 @@ switch method
             x1(k+1) = xk;
             y1(k+1) = yk;
         end
-    % Runge-Kutta 4. Ordnung (Newtonsche 3/8 Regel)
+        
+    %*** Runge-Kutta forth-order method (3/8-rule)
     case 'rungeKutta4Newton'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
@@ -112,7 +117,8 @@ switch method
             x1(k+1) = x1(k) + dt/8*(k11+3*(k21+k31)+k41);
             y1(k+1) = y1(k) + dt/8*(k12+3*(k22+k32)+k42);
         end
-    % Runge-Kutta 4. Ordnung (klassisch)
+        
+    %*** classic Runge-Kutta forth-order method
     case 'rungeKutta4Classic'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
@@ -128,11 +134,14 @@ switch method
             x1(k+1) = x1(k) + dt/6*(k11+2*(k21+k31)+k41);
             y1(k+1) = y1(k) + dt/6*(k12+2*(k22+k32)+k42);
         end
+        
     otherwise
         error('Please choose a method.');
 end
+
 x1 = x1 + x(1);
 y1 = y1 + y(1);
+
 end
 
 function [u,v] = getValueMonic(U,V,dx,dy,sx,sy,xmx0,ymy0)

@@ -1,7 +1,7 @@
 function varargout = postprocessing_mini(varargin)
 %*** varargout{1} = timerVal (runtime of pathline iteration)
 
-%*** add extra arguments
+%*** parse additional arguments
 p = inputParser;
 addParameter(p,'N',[])
 addParameter(p,'subSteps',100)
@@ -12,10 +12,12 @@ parse(p,varargin{:})
 %*** load solution
 load solution_iNS_mini_2.mat N coordinates dirichlet neumann elements3 T U P
 
-%*** overwrite N
+%*** if defined, overwrite default N
 if p.Results.N
     N = p.Results.N;
 end
+fprintf("Calculating with method '%s' and %d substeps ...\n", ...
+        p.Results.method, p.Results.subSteps)
 
 t = linspace(0,T,N);
 ifront = abs(coordinates(:,1)-0.15)<1e-5 ...
@@ -28,16 +30,16 @@ for k=1:N
     pdiff(k) = -(P{k}(ifront) - P{k}(iback));
 end
 
-% figure(1)
-% plot(t(30:end),pdiff(30:end))
-% title('Pressure difference')
-% 
-% figure(2),clf
-% plot(reshape(coordinates(dirichlet,1),[],2)', ...
-%      reshape(coordinates(dirichlet,2),[],2)','r-','linewidth',2)
-% hold on
-% plot(reshape(coordinates(neumann,1),[],2)', ...
-%      reshape(coordinates(neumann,2),[],2)','g-','linewidth',2)
+figure(1)
+plot(t(30:end),pdiff(30:end))
+title('Pressure difference')
+
+figure(2),clf
+plot(reshape(coordinates(dirichlet,1),[],2)', ...
+     reshape(coordinates(dirichlet,2),[],2)','r-','linewidth',2)
+hold on
+plot(reshape(coordinates(neumann,1),[],2)', ...
+     reshape(coordinates(neumann,2),[],2)','g-','linewidth',2)
 
 %*** plot pathline for one single point first
 x0 = [0,0,0,0,0,0,0,0,0];
@@ -56,15 +58,11 @@ ux = reshape(u(elements3,1),[],3);
 uy = reshape(u(elements3,2),[],3);
 uv1 = tri2monic(coordinates,elements3,{ux,uy},x,y);
 
-%*** available methods: euler, bettereuler, eulerheun, cranknicolson,
-%                       rungekutta4newton, rungekutta4classic
-fprintf("Calculating with method '%s' and %d substeps ...\n", ...
-        p.Results.method, p.Results.subSteps)
 %*** initiate array for timing
 timerVal = zeros(length(x0),length(first:last));
 
 for k = first:last
-%     k
+    k
     u = U{k+1};
     ux = reshape(u(elements3,1),[],3);
     uy = reshape(u(elements3,2),[],3);
@@ -76,9 +74,9 @@ for k = first:last
         timerVal(j,k) = toc;
         x0(j) = vx(end);
         y0(j) = vy(end);
-%         plot(vx,vy,'k.')
+        plot(vx,vy,'k.')
     end
-%     drawnow
+    drawnow
     %*** save uv2 for the next iteration
     uv1 = uv2;
 end
