@@ -97,7 +97,7 @@ switch method
             y1(k+1) = yk;
         end
         
-    %*** Runge-Kutta forth-order method (3/8-rule)
+    %*** Runge-Kutta fourth-order method (3/8-rule)
     case 'rungeKutta4Newton'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
@@ -118,7 +118,7 @@ switch method
             y1(k+1) = y1(k) + dt/8*(k12+3*(k22+k32)+k42);
         end
         
-    %*** classic Runge-Kutta forth-order method
+    %*** classic Runge-Kutta fourth-order method
     case 'rungeKutta4Classic'
         for k = 1 : N-1
             U = u1 + (k-1)/(N-1)*(u2-u1);
