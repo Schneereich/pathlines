@@ -3,7 +3,19 @@ This is a small MATLAB(R) project for the lecture "[Introduction to Numerical Fl
 )".
 The aim is the calculation and visualisation of pathlines inside the Kármán vortex street.
 
-<img src="https://snipboard.io/mGSb0d.jpg" width="40%"/>
+<table style="width:100%">
+  <tr>
+    <td style="width:50%">first = 100</td><td style="width:50%">first = 1</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://snipboard.io/mGSb0d.jpg" width="100%"/>
+    </td>
+    <td>
+      <img src="https://snipboard.io/hJ3RFV.jpg" width="100%"/>
+    </td>
+  </tr>
+</table>
 
 ## Numerical methods for solving
 The following solve methods are available in [`pathline.m`](pathline.m):
