@@ -39,5 +39,5 @@ The return value of [`postprocessing_mini.m`](postprocessing_mini.m) is optional
 ### Run [`evaluatePerfomance.m`](evaluatePerfomance.m)
 Running [`evaluatePerfomance.m`](evaluatePerfomance.m) will compare the runtime between the different numerical methods over a changing number of `subSteps`.
 
-<img src="https://snipboard.io/kIsciD.jpg" width="45%"/>
-<img src="https://snipboard.io/sDLb19.jpg" width="45%"/>
+<img src="https://snipboard.io/R4phXy.jpg" width="45%"/>
+<img src="https://snipboard.io/1fAoeX.jpg" width="45%"/>
